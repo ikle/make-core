@@ -11,6 +11,8 @@
 #
 
 PREFIX	?= /usr
+INCDIR	?= $(PREFIX)/include
+LIBDIR	?= $(PREFIX)/lib/$(MULTIARCH)
 BINDIR	?= $(PREFIX)/bin
 SBINDIR	?= $(PREFIX)/sbin
 DESTDIR	?=
@@ -33,22 +35,48 @@ all:
 # source and target file filters
 #
 
+HEADERS	= $(filter-out %-int.h, $(wildcard *.h))
 SOURCES	= $(filter-out %-main.c %-service.c, $(wildcard *.c))
 OBJECTS	= $(patsubst %.c,%.o, $(SOURCES))
+
 TOOLS	= $(patsubst %-main.c,%, $(wildcard *-main.c))
 SERVICES = $(patsubst %-service.c,%, $(wildcard *-service.c))
 
 #
-# rules to manage base library
+# rules to manage static libraries
 #
 
 %.a:
 	$(AR) rc $@ $^
 	$(RANLIB) $@
 
-.PHONY: clean-static
+.PHONY: install-headers
+.PHONY: build-static clean-static install-static
+
+ifdef LIBNAME
+
+AFILE	= lib$(LIBNAME).a
+LIBVER	?= 0
+LIBREV	?= 0.1
+
+install: install-headers
+
+install-headers:
+	install -d $(DESTDIR)$(INCDIR)/$(LIBNAME)-$(LIBVER)
+	install -m 644 $(HEADERS) $(DESTDIR)$(INCDIR)/$(LIBNAME)-$(LIBVER)
+
+all:     build-static
+install: install-static
+
+install-static: $(AFILE)
+	install -d $(DESTDIR)$(LIBDIR)
+	install -m 644 $(AFILE) $(DESTDIR)$(LIBDIR)
+
+else  # not defined LIBNAME
 
 AFILE	= bundle.a
+
+endif  # LIBNAME
 
 $(AFILE): $(OBJECTS)
 
