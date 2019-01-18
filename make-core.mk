@@ -12,6 +12,7 @@
 
 PREFIX	?= /usr
 BINDIR	?= $(PREFIX)/bin
+SBINDIR	?= $(PREFIX)/sbin
 DESTDIR	?=
 
 #
@@ -32,9 +33,10 @@ all:
 # source and target file filters
 #
 
-SOURCES	= $(filter-out %-main.c, $(wildcard *.c))
+SOURCES	= $(filter-out %-main.c %-service.c, $(wildcard *.c))
 OBJECTS	= $(patsubst %.c,%.o, $(SOURCES))
 TOOLS	= $(patsubst %-main.c,%, $(wildcard *-main.c))
+SERVICES = $(patsubst %-service.c,%, $(wildcard *-service.c))
 
 #
 # rules to manage base library
@@ -77,3 +79,26 @@ clean-tools:
 install-tools: build-tools
 	install -d $(DESTDIR)$(BINDIR)
 	install -m 755 $(TOOLS) $(DESTDIR)$(BINDIR)
+
+#
+# rules to manage services (system programs)
+#
+
+%: %-service.c
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
+
+.PHONY: build-services clean-services install-services
+
+all:     build-services
+clean:   clean-services
+install: install-services
+
+$(SERVICES): $(AFILE)
+
+build-services: $(SERVICES)
+clean-services:
+	$(RM) $(SERVICES)
+
+install-services: build-services
+	install -d $(DESTDIR)$(SBINDIR)
+	install -m 755 $(SERVICES) $(DESTDIR)$(SBINDIR)
