@@ -18,12 +18,6 @@ SBINDIR	?= $(PREFIX)/sbin
 DESTDIR	?=
 
 #
-# build tools
-#
-
-RANLIB	?= ranlib
-
-#
 # guarantie default target
 #
 
@@ -48,7 +42,6 @@ SERVICES = $(patsubst %-service.c,%, $(wildcard *-service.c))
 
 %.a:
 	$(AR) rc $@ $^
-	$(RANLIB) $@
 
 .PHONY: install-headers
 .PHONY: build-static clean-static install-static
