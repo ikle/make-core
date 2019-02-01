@@ -29,7 +29,7 @@ all:
 # source and target file filters
 #
 
-HEADERS	= $(filter-out %-int.h, $(wildcard *.h))
+HEADERS	= $(wildcard include/*.h include/*/*.h)
 SOURCES	= $(filter-out %-test.c %-main.c %-service.c, $(wildcard *.c))
 OBJECTS	= $(patsubst %.c,%.o, $(SOURCES))
 
@@ -55,12 +55,18 @@ LIBREV	?= 0.1
 
 install: install-headers
 
-install-headers:
-	install -d $(DESTDIR)$(INCDIR)/$(LIBNAME)-$(LIBVER)
-	install -m 644 $(HEADERS) $(DESTDIR)$(INCDIR)/$(LIBNAME)-$(LIBVER)
+INCROOT	= $(INCDIR)/$(LIBNAME)-$(LIBVER)
+
+define install-header
+install-headers:: ; install -Dm 644 $(1) $(DESTDIR)$(INCROOT)/$(1:include/%=%)
+endef
+
+$(foreach F,$(HEADERS),$(eval $(call install-header,$(F))))
 
 all:     build-static
 install: install-static
+
+$(OBJECTS): CFLAGS += -I$(CURDIR)/include
 
 install-static: $(AFILE)
 	install -d $(DESTDIR)$(LIBDIR)
