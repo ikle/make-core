@@ -91,6 +91,8 @@ clean-static:
 # rules to manage tests (ordinary programs)
 #
 
+ifneq ($(TESTS),)
+
 %-test: %-test.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
 
@@ -106,9 +108,13 @@ build-tests: $(TESTS)
 clean-tests:
 	$(RM) $(TESTS)
 
+endif  # build TESTS
+
 #
 # rules to manage tools (ordinary programs)
 #
+
+ifneq ($(TOOLS),)
 
 %: %-main.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
@@ -129,9 +135,13 @@ install-tools: build-tools
 	install -d $(DESTDIR)$(BINDIR)
 	install -m 755 $(TOOLS) $(DESTDIR)$(BINDIR)
 
+endif  # build TOOLS
+
 #
 # rules to manage services (system programs)
 #
+
+ifneq ($(SERVICES),)
 
 %: %-service.c
 	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
@@ -151,3 +161,5 @@ clean-services:
 install-services: build-services
 	install -d $(DESTDIR)$(SBINDIR)
 	install -m 755 $(SERVICES) $(DESTDIR)$(SBINDIR)
+
+endif  # build SERVICES
