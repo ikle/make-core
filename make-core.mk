@@ -30,9 +30,10 @@ all:
 #
 
 HEADERS	= $(filter-out %-int.h, $(wildcard *.h))
-SOURCES	= $(filter-out %-main.c %-service.c, $(wildcard *.c))
+SOURCES	= $(filter-out %-test.c %-main.c %-service.c, $(wildcard *.c))
 OBJECTS	= $(patsubst %.c,%.o, $(SOURCES))
 
+TESTS	= $(patsubst %-test.c,%-test, $(wildcard *-test.c))
 TOOLS	= $(patsubst %-main.c,%, $(wildcard *-main.c))
 SERVICES = $(patsubst %-service.c,%, $(wildcard *-service.c))
 
@@ -77,6 +78,25 @@ clean: clean-static
 
 clean-static:
 	$(RM) $(AFILE) $(OBJECTS)
+
+#
+# rules to manage tests (ordinary programs)
+#
+
+%-test: %-test.c
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^
+
+.PHONY: build-test clean-tests
+
+all:     build-tests
+clean:   clean-tests
+
+$(TESTS): CFLAGS += -I$(CURDIR)/include
+$(TESTS): $(AFILE)
+
+build-tests: $(TESTS)
+clean-tests:
+	$(RM) $(TESTS)
 
 #
 # rules to manage tools (ordinary programs)
