@@ -41,7 +41,7 @@ SERVICES = $(patsubst %-service.c,%, $(wildcard *-service.c))
 #
 
 %.a:
-	$(AR) rc $@ $^
+	$(AR) -rc $@ $^
 
 .PHONY: install-headers
 .PHONY: build-static clean-static install-static
