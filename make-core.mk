@@ -80,6 +80,8 @@ endif  # LIBNAME
 
 $(AFILE): $(OBJECTS)
 
+build-static: $(AFILE)
+
 clean: clean-static
 
 clean-static:
