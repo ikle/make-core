@@ -52,6 +52,7 @@ ifdef LIBNAME
 AFILE	= lib$(LIBNAME).a
 LIBVER	?= 0
 LIBREV	?= 0.1
+PCFILE	= $(LIBNAME).pc
 
 install: install-headers
 
@@ -68,9 +69,18 @@ install: install-static
 
 $(OBJECTS): CFLAGS += -I$(CURDIR)/include
 
-install-static: $(AFILE)
-	install -d $(DESTDIR)$(LIBDIR)
+$(PCFILE):
+	@test -n "$(DESCRIPTION)" && echo "Description: $(DESCRIPTION)"	>  $@
+	@test -n "$(URL)" && echo "URL: $(URL)"		>> $@
+	@echo "Name: $(LIBNAME)"			>> $@
+	@echo "Version: $(LIBVER).$(LIBREV)"		>> $@
+	@echo "Libs: -l$(LIBNAME)"			>> $@
+	@echo "Cflags: -I$(INCROOT)"			>> $@
+
+install-static: $(AFILE) $(PCFILE)
+	install -d $(DESTDIR)$(LIBDIR)/pkgconfig
 	install -m 644 $(AFILE) $(DESTDIR)$(LIBDIR)
+	install -m 644 $(PCFILE) $(DESTDIR)$(LIBDIR)/pkgconfig
 
 else  # not defined LIBNAME
 
@@ -85,7 +95,7 @@ build-static: $(AFILE)
 clean: clean-static
 
 clean-static:
-	$(RM) $(AFILE) $(OBJECTS)
+	$(RM) $(AFILE) $(OBJECTS) $(PCFILE)
 
 #
 # rules to manage tests (ordinary programs)
