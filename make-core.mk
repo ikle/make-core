@@ -30,7 +30,7 @@ endif
 # guarantie default target
 #
 
-.PHONY: all clean install
+.PHONY: all clean install doc
 
 all:
 
@@ -55,11 +55,13 @@ ifneq ($(CHILDS),)
 all:       build-childs
 clean:     clean-childs
 install: install-childs
+doc:         doc-childs
 
 define declare-child
 build-childs::   ; make -C $(1)
 clean-childs::   ; make -C $(1) clean
 install-childs:: ; make -C $(1) install
+doc-childs::     ; make -C $(1) doc
 endef
 
 $(foreach F,$(CHILDS),$(eval $(call declare-child,$(F))))
@@ -113,6 +115,23 @@ install-static: $(AFILE) $(PCFILE)
 	install -d $(DESTDIR)$(LIBDIR)/pkgconfig
 	install -m 644 $(AFILE) $(DESTDIR)$(LIBDIR)
 	install -m 644 $(PCFILE) $(DESTDIR)$(LIBDIR)/pkgconfig
+
+.PHONY: build-doc clean-doc
+
+doc: build-doc
+
+build-doc:
+	mkdir -p doc/html
+	gtkdoc-scan --module=$(LIBNAME) \
+		--source-dir=. --output-dir=doc/db --rebuild-sections
+	(cd doc/db && gtkdoc-mkdb --module=$(LIBNAME) --source-dir=$(CURDIR))
+	(cd doc/html && \
+	gtkdoc-mkhtml $(LIBNAME) $(CURDIR)/doc/db/$(LIBNAME)-docs.xml)
+
+clean: clean-doc
+
+clean-doc:
+	rm -rf doc/db doc/html doc/*.stamp
 
 else  # not defined LIBNAME
 
