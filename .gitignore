@@ -4,3 +4,7 @@
 *.pc
 *.swp
 *-test
+
+*/doc/db
+*/doc/html
+*/doc/*.stamp
