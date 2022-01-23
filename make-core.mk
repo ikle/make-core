@@ -47,28 +47,6 @@ TOOLS	= $(patsubst %-tool.c,%, $(wildcard *-tool.c))
 SERVICES = $(patsubst %-service.c,%, $(wildcard *-service.c))
 
 #
-# rules to manage subprojects
-#
-
-ifneq ($(CHILDS),)
-
-all:       build-childs
-clean:     clean-childs
-install: install-childs
-doc:         doc-childs
-
-define declare-child
-build-childs::   ; make -C $(1)
-clean-childs::   ; make -C $(1) clean
-install-childs:: ; make -C $(1) install
-doc-childs::     ; make -C $(1) doc
-endef
-
-$(foreach F,$(CHILDS),$(eval $(call declare-child,$(F))))
-
-endif  # CHILDS
-
-#
 # rules to manage static libraries
 #
 
