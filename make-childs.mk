@@ -7,6 +7,21 @@
 #
 
 #
+# sysroot defines
+#
+
+PREFIX	?= /usr
+LIBDIR	?= $(PREFIX)/lib/$(MULTIARCH)
+PCDIR	?= $(LIBDIR)/pkgconfig
+SYSROOT	?= $(CURDIR)/sysroot
+
+pathlist = $(subst $(eval) ,:,$(strip $1))
+
+PKG_CONFIG_PATH	:= $(call pathlist,$(SYSROOT)$(PCDIR) $(PKG_CONFIG_PATH))
+
+export SYSROOT PKG_CONFIG_PATH
+
+#
 # guarantie default target
 #
 
@@ -30,7 +45,7 @@ doc:         doc-$(1)
 $(1): $(1).ok
 
 $(1).ok:
-	+$(MAKE) -C $(1)
+	+$(MAKE) -C $(1) install DESTDIR=$(SYSROOT)
 	@echo > $(1).ok
 
 clean-$(1):

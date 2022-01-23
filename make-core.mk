@@ -22,6 +22,10 @@ DESTDIR	?=
 #
 
 ifneq ($(DEPENDS),)
+ifneq ($(SYSROOT),)
+CFLAGS	+= `pkg-config --define-prefix $(DEPENDS) --cflags`
+LDFLAGS	+= `pkg-config --define-prefix $(DEPENDS) --libs`
+endif
 CFLAGS	+= `pkg-config $(DEPENDS) --cflags`
 LDFLAGS	+= `pkg-config $(DEPENDS) --libs`
 endif
