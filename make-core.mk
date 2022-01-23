@@ -1,7 +1,7 @@
 #
 # Colibri Build System
 #
-# Copyright (c) 2006-2021 Alexei A. Smekalkine <ikle@ikle.ru>
+# Copyright (c) 2006-2022 Alexei A. Smekalkine <ikle@ikle.ru>
 #
 # SPDX-License-Identifier: BSD-2-Clause
 #
@@ -38,7 +38,7 @@ all:
 # source and target file filters
 #
 
-HEADERS	= $(wildcard include/*.h include/*/*.h)
+HEADERS	= $(wildcard include/*.h include/*/*.h include/*/*/*.h)
 SOURCES	= $(filter-out %-test.c %-tool.c %-service.c, $(wildcard *.c))
 OBJECTS	= $(patsubst %.c,%.o, $(SOURCES))
 
