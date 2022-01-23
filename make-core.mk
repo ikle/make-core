@@ -98,23 +98,6 @@ install-static: $(AFILE) $(PCFILE)
 	install -m 644 $(AFILE) $(DESTDIR)$(LIBDIR)
 	install -m 644 $(PCFILE) $(DESTDIR)$(LIBDIR)/pkgconfig
 
-.PHONY: build-doc clean-doc
-
-doc: build-doc
-
-build-doc:
-	mkdir -p doc/html
-	gtkdoc-scan --module=$(LIBNAME) \
-		--source-dir=. --output-dir=doc/db --rebuild-sections
-	(cd doc/db && gtkdoc-mkdb --module=$(LIBNAME) --source-dir=$(CURDIR))
-	(cd doc/html && \
-	gtkdoc-mkhtml $(LIBNAME) $(CURDIR)/doc/db/$(LIBNAME)-docs.xml)
-
-clean: clean-doc
-
-clean-doc:
-	rm -rf doc/db doc/html doc/*.stamp
-
 else  # not defined LIBNAME
 
 AFILE	= bundle.a
