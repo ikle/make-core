@@ -79,15 +79,19 @@ install: install-static
 $(OBJECTS): CFLAGS += -I$(CURDIR)/include
 
 $(PCFILE):
-	@test -n "$(DESCRIPTION)" && echo "Description: $(DESCRIPTION)"	>  $@
+	@echo "prefix=$(PREFIX)"					>  $@
+	@echo "includedir=\$${prefix}$(INCDIR:$(PREFIX)%=%)"		>> $@
+	@echo "libdir=\$${prefix}$(LIBDIR:$(PREFIX)%=%)"		>> $@
+	@echo								>> $@
+	@test -n "$(DESCRIPTION)" && echo "Description: $(DESCRIPTION)"	>> $@
 	@test -n "$(URL)" && echo "URL: $(URL)"		>> $@
 	@echo "Name: $(LIBNAME)"			>> $@
 	@echo "Version: $(LIBVER).$(LIBREV)"		>> $@
 ifneq ($(DEPENDS),)
 	@echo "Requires: $(DEPENDS)"			>> $@
 endif
-	@echo "Libs: -l$(LIBNAME)"			>> $@
-	@echo "Cflags: -I$(INCROOT)"			>> $@
+	@echo "Libs: -L\$${libdir} -l$(LIBNAME)"			>> $@
+	@echo "Cflags: -I\$${includedir}$(INCROOT:$(INCDIR)%=%)"	>> $@
 
 install-static: $(AFILE) $(PCFILE)
 	install -d $(DESTDIR)$(LIBDIR)/pkgconfig
