@@ -1,0 +1,11 @@
+#
+# Colibri Build System: Subprojects Example
+#
+
+# one own directory per subproject
+CHILDS  = conf net misc sys
+
+include make-childs.mk
+
+# example subproject dependency
+net.ok: conf.ok
