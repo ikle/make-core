@@ -43,6 +43,7 @@ install: install-$(1)
 doc:         doc-$(1)
 
 $(1): $(1).ok
+	+$(MAKE) -C $(1)
 
 $(1).ok:
 	+$(MAKE) -C $(1) install DESTDIR=$(SYSROOT)
